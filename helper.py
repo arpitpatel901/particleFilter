@@ -40,6 +40,7 @@ def create_gaussian_particles(mean, std, N):
     particles[:, 1] = mean[1] + (np.random.randn(N) * std[1])
     particles[:, 2] = mean[2] + (np.random.randn(N) * std[2])
     particles[:, 2] %= 2 * np
+    return particles
 
 
 def predict(particles, u, std, dt=1.):

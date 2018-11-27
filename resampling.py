@@ -1,6 +1,6 @@
+
 from numpy.random import random
 import numpy as np
-
 
 def resample_from_index(particles, weights, indexes):
     particles[:] = particles[indexes]
@@ -21,12 +21,13 @@ def residual_resample(weights):
     indexes = np.zeros(N, 'i')
 
     # take int(N*w) copies of each weight
-    num_copies = (N*np.asarray(weights)).astype(int)
+    w = np.asarray(weights)
+    num_copies = (N*w).astype(int)
     k = 0
     for i in range(N):
         for _ in range(num_copies[i]): # make n copies
-        indexes[k] = i
-        k += 1
+            indexes[k] = i
+            k += 1
 
     # use multinormial resample on the residual to fill up the rest.
     residual = w - num_copies

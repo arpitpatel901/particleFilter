@@ -1,7 +1,14 @@
-from filterpy.monte_carlo import systematic_resample
+
 from numpy.linalg import norm
 from numpy.random import randn
+from numpy.random import random
 import scipy.stats
+from numpy.random import seed
+import numpy as np
+import matplotlib.pyplot as plt
+
+from resampling import systematic_resample , resample_from_index 
+from helper import create_gaussian_particles , create_uniform_particles, predict , update,neff ,estimate
 
 def run_pf1(N, iters=18, sensor_std_err=.1,do_plot=True, plot_particles=False,xlim=(0, 20), ylim=(0, 20),initial_x=None):
 
@@ -20,9 +27,9 @@ def run_pf1(N, iters=18, sensor_std_err=.1,do_plot=True, plot_particles=False,xl
     
     if plot_particles:
         alpha = .20
-            if N > 5000:
-                alpha *= np.sqrt(5000)/np.sqrt(N)
-            plt.scatter(particles[:, 0], particles[:, 1],alpha=alpha, color='g')
+        if N > 5000:
+            alpha *= np.sqrt(5000)/np.sqrt(N)
+        plt.scatter(particles[:, 0], particles[:, 1],alpha=alpha, color='g')
     
     xs = []
     robot_pos = np.array([0., 0.])
@@ -61,7 +68,8 @@ def run_pf1(N, iters=18, sensor_std_err=.1,do_plot=True, plot_particles=False,xl
     plt.ylim(*ylim)
     print('final position error, variance:\n\t', mu - np.array([iters, iters]), var)
     plt.show()
-    
-from numpy.random import seed
+
+
+if __name__ == "__main__":
     seed(2)
-    run_pf1(N=5000, plot_particles=False)
+    run_pf1(N=5000, plot_particles=False)  
