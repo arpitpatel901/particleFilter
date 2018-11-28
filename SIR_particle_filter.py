@@ -42,9 +42,12 @@ def run_pf1(N, iters=18, sensor_std_err=.1,do_plot=True, plot_particles=False,xl
         (randn(NL) * sensor_std_err))
 
         # move diagonally forward to (x+1, x+1)
-        predict(particles, u=(0.00, 1.414), std=(.2, .05))
+        predict(particles, u=(0.00, 1.414), std=(.2, .05)) # assumed to be moving in a straight line (1-X,1-Y) with no angle change
         
         # incorporate measurements
+        # weight of the particle is computed as the probability that it matches
+        # the Gaussian of the sensor error model. Further the particle from measured distance,less likely it is a good 
+        # representation
         update(particles, weights, z=zs, R=sensor_std_err,landmarks=landmarks)
         
         # resample if too few effective particles
@@ -72,4 +75,4 @@ def run_pf1(N, iters=18, sensor_std_err=.1,do_plot=True, plot_particles=False,xl
 
 if __name__ == "__main__":
     seed(2)
-    run_pf1(N=5000, plot_particles=False)  
+    run_pf1(N=5000, plot_particles=True, initial_x=(1,1, np.pi/4))  

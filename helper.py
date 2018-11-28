@@ -39,7 +39,7 @@ def create_gaussian_particles(mean, std, N):
     particles[:, 0] = mean[0] + (np.random.randn(N) * std[0])
     particles[:, 1] = mean[1] + (np.random.randn(N) * std[1])
     particles[:, 2] = mean[2] + (np.random.randn(N) * std[2])
-    particles[:, 2] %= 2 * np
+    particles[:, 2] %= 2 * np.pi
     return particles
 
 
@@ -71,18 +71,21 @@ def update(particles, weights, z, R, landmarks):
     Args :
         particles           : Particles to be sampled
         weights             : Probability that each particle represents the true position of the robot
-        z                   : Z value for calculation of pdf for normal distribution [0,z]
-        R                   : Residual of the distance measurement
-        landmarks           : Known location from the sensor measurement
+        z                   : Z value for calculation of pdf for normal distribution [0,z] . Distance from robot to each landmark
+        R                   : Residual of the distance measurement(sensor standard deviation)
+        landmarks           : Known location from the sensor measurement for each object currently in view
 
     """
     # Initilize the particle weights
+    # we are discarding the weights, but we do not discard the particles.
     weights.fill(1.)
 
     for i, landmark in enumerate(landmarks):
         # measure the eucledian distance betn particles and actual positions
         distance = np.linalg.norm(particles[:, 0:2] - landmark, axis=1) 
-        #importance density : weight the particles according to how well they match the measurements
+        # importance density : we draw from the known
+        # distribution, but weight by the unknown distribution. In this case our known distribution is the uniform
+        # distribution - all are weighted equally
         weights *= scipy.stats.norm(distance, R).pdf(z[i]) # make a normal continuous random variable and take its pdf
 
     weights += 1.e-300 # Approximation to avoid round-off to zero
